@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Deploys a DocumentDB for Loyalty Database on AWS'
+Parameters:
+  VPC:
+    Type: AWS::EC2::VPC::Id
+Resources:
+  LoyaltyDB:
+    Type: AWS::DocDB::DBCluster
+    Properties: 
+      BackupRetentionPeriod: 1
+      DBClusterIdentifier: ""
+      DBSubnetGroupName: ""
+      MasterUsername: ""
+      MasterUserPassword: ""
+      Port: 27017
+      VpcSecurityGroupIds: 
+        - !Ref LoyaltyDBsg
+  LoyaltyDBsg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName:
+        Fn::Sub: loyaltydb-sg
+      GroupDescription: Allow access from VMC
+      VpcId:
+        Ref: VPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '27017'
+        ToPort: '27017'
+        CidrIp: 10.0.0.0/8
+  db1: 
+    Type: AWS::DocDB::DBInstance
+    Properties: 
+      DBClusterIdentifier: !Ref LoyaltyDB
+      DBInstanceClass: db.t3.medium

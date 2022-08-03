@@ -1,0 +1,34 @@
+---
+apiVersion: cert-manager.io/v1alpha2 #v11
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+  namespace: cert-manager
+spec:
+  acme:
+    email: user@hardtophotels.com #use your own email address - change as needed
+    solvers:
+      - selector: {}
+        http01:
+          ingress:
+            class: contour #ingress controller in use - change as needed
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    server: https://acme-staging-v02.api.letsencrypt.org/directory #letsencrypt url
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-production
+  namespace: cert-manager
+spec:
+  acme:
+    email: user@hardtophotels.com #use your own email address - change as needed
+    solvers:
+      - selector: {}
+        http01:
+          ingress:
+            class: contour #ingress controller in use - change as needed
+    privateKeySecretRef:
+      name: letsencrypt-production 
+    server: https://acme-v02.api.letsencrypt.org/directory #letsencrypt url

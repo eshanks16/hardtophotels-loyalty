@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment                 
+metadata:
+  name: hardtop-web  
+  namespace: web         
+spec:
+  replicas: 3                    
+  selector:
+    matchLabels:
+      app: hardtop-web
+  template:                      
+    metadata:
+      labels:                    
+        app: hardtop-web 
+    spec:                        
+      containers:
+      - name: hardtop-web
+        image: eshanks16/ht-web:v1
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8080   
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: htweb-svc
+  namespace: web
+  labels:
+    app: hardtop-web
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP
+  selector:
+    app: hardtop-web
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: ht-web-ingress
+  namespace: web
+spec:
+  virtualhost:
+    fqdn: hardtophotels.com
+  routes:
+  - services:
+    - name: htweb-svc
+      port: 8080
+    conditions:
+      - prefix: /
